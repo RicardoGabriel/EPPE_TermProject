@@ -95,3 +95,5 @@ The breakthrough here is that Synth often returns an extremely well-fitted model
 [Synthetic Control Methods for Comparative Case Studies: Estimating the Effect of California’s Tobacco Control Program (Abadie, Diamond and Hainmueller, 2012)](http://web.stanford.edu/~jhain/Paper/JASA2010.pdf)
 
 [The Economic Costs of Conflict: A Case Study of the Basque Country (Abadie and Gardeazabal, 2003)](https://www.aeaweb.org/articles?id=10.1257/000282803321455188)
+
+[The Costs of Economic Nationalism: Evidence from the Brexit Experiment (Born, Müller, Schularick and Sedlacek, 2018)](http://www.benjaminborn.de/publication/bmss2017/)
