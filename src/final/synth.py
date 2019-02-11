@@ -376,10 +376,11 @@ def get_v_1(v, w, x0, x1, z0, z1):
     result = fmin_slsqp(get_v_0, v, args=(w, x0, x1, z0, z1), bounds=[(0.0, 1.0)]*len(v))
     return result
 
-def get_estimate(x0, x1, z0, z1, y0):
+def get_estimate(x0, x1, z0, z1, y0, w):
     (k,j) = x0.shape
     v = [1.0]*k
-    w = np.array([1.0/j]*j).transpose()
+    #w = np.array([0/j]*j).transpose()
+    #w = np.array([1.0/j]*j).transpose()
     predictors = get_v_1(v, w, x0, x1, z0, z1)
     controls = np.array(get_w(w, predictors, x0, x1)).transpose()
     estimates = np.dot(y0,controls)
@@ -391,6 +392,7 @@ def synth_tables(foo,
                  control_units, 
                  index_variable, 
                  measured_variable,
+                 Weights,
                  time_variable,
                  predict_time, 
                  optimize_time, 
@@ -413,7 +415,7 @@ def synth_tables(foo,
                  plot_time, 
                  function="mean")
 
-    (est, predict, ctrls) = get_estimate(X0, X1, Z0, Z1, Y0)
+    (est, predict, ctrls) = get_estimate(X0, X1, Z0, Z1, Y0, Weights)
     predict = [ round(elem,6) for elem in predict ]
     ctrls = [ round(elem,6) for elem in ctrls ]
     estimated_predictors = np.dot(X0,ctrls).transpose()

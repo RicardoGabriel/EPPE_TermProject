@@ -3,17 +3,18 @@ Created on Sun Feb  3 14:08:09 2019
 @author: Ricardo Duque Gabriel
 
 Code for the creation of a SCG for Japanese GDP series  
-using 32 OECD countries to be our donor pool
+using 31 OECD countries to be our donor pool
 """
-
-#to do in the excel - exclude SVN and GRC from countries and compute gdp_s per
-#capita and its lags (maybe)
 
 import pandas as pd
 import matplotlib.pyplot as plt
 import synth
+#from bld.project_paths import project_paths_join as ppj
 
+#import excel dataset to panda dataframe
+#df = pd.read_excel(ppj("IN_DATA",'Dataset_TermPaper.xlsx'), header=0).iloc[:3135]
 df = pd.read_excel('Dataset_TermPaper.xlsx', header=0).iloc[:3135]
+
 
 #define control units
 control_units = list(set(df["code"]))
@@ -33,6 +34,7 @@ synth_tables(  df,
                control_units,
                "code",
                "pc_gdp_s",
+               np.array([1/len(control_units)]*len(control_units)).transpose(), #equal weights
                "time",
                [1,2,3,4,5,6,7,8],
                [1,2,3,4,5,6,7,8],

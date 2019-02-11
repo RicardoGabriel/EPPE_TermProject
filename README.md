@@ -6,9 +6,13 @@ This package was first created by @gnazareths (https://github.com/gnazareths/syn
 
 Firstly, I will try to face current limitation number 2 by implementing a change in the code which will transform an excel file in a panda dataframe using the method read_excel() find in https://pythonspot.com/read-excel-with-pandas/
 
-Secondly, I will provide a minimum working example with a real dataset for 32 OECD countries. I will provide a computation of a synthetic control group for Australia by trying to mimic its real per capita gdp series using several real per capita predictors such as private consumption,  government consumption, investment, and debt-to-GDP ratio.
+Secondly, I will provide a minimum working example with a real dataset for 32 OECD countries. I will provide a computation of a synthetic control group for Japan by trying to mimic its real per capita gdp series using its real per capita gdp as predictor.
 
-Thirdly, I will finish the project by providing a reproducible research template following @hmgaudecker - http://hmgaudecker.github.io/econ-project-templates/.
+Thirdly, I will add some flexibility to the package by allowing a manual imputation of an initial guess for the weights matrix.
+
+Fourthly, I will provide a more complete working example with the same dataset. Following Born et al. (2018) I will provide a computation of a synthetic control group for Great Britain to evaluate the Brexit impact on GDP by trying to mimic its real per capita gdp series using itself as a predictor jointly with real per capita government consumption, unemployment rate, and debt-to-GDP ratio.
+
+Finally, I will finish the project by providing a reproducible research template following @hmgaudecker - http://hmgaudecker.github.io/econ-project-templates/.
 
 ## Introduction
 
