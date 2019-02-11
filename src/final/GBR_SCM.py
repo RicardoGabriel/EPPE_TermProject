@@ -20,11 +20,11 @@ control_units = control_units[0:13]+control_units[14:]
 
 
 #define which predictors to use
-predictors = ["pc_gdp_s", "unemp", "debt",
+predictors = ["pc_gdp_s", "unemp", "pc_govcons_s", 
              ]
 
 #define initial educated guess for weights - following Born et al. (2018)
-weights=np.array([0,0,0,0.16,0,0,0,0,0,0,0,0,0,0.21,0.05,0,0,0.04,0.23,0,0,0,0,0,0,0.07,0,0,0,0,0,0.24]).transpose()
+weights=np.array([0,0,0,0.16,0,0,0,0,0,0,0,0,0,0.21,0.00,0,0,0.04,0.24,0.03,0,0,0,0,0,0.04,0,0,0.06,0,0,0.22]).transpose()
 
 #create synth tables
 synth_tables(  df,

@@ -27,6 +27,11 @@ control_units = control_units[0:19]+control_units[20:32]
 predictors = ["pc_gdp_s",
              ]
 
+#define initial educated guess for weights - following Born et al. (2018)
+weights=np.array([1/len(control_units)]*len(control_units)).transpose() #equal weights
+
+
+
 #create synth tables
 synth_tables(  df,
                predictors,
@@ -34,7 +39,7 @@ synth_tables(  df,
                control_units,
                "code",
                "pc_gdp_s",
-               np.array([1/len(control_units)]*len(control_units)).transpose(), #equal weights
+               weights,
                "time",
                [1,2,3,4,5,6,7,8],
                [1,2,3,4,5,6,7,8],

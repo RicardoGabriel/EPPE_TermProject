@@ -8,7 +8,7 @@ Firstly, I will try to face current limitation number 2 by implementing a change
 
 Secondly, I will provide a minimum working example with a real dataset for 32 OECD countries. I will provide a computation of a synthetic control group for Japan by trying to mimic its real per capita gdp series using its real per capita gdp as predictor.
 
-Thirdly, I will add some flexibility to the package by allowing a manual imputation of an initial guess for the weights matrix.
+Thirdly, I will add some flexibility to the package by allowing a manual imputation of an initial guess for the weights matrix and some tests for a more complete and correct addition.
 
 Fourthly, I will provide a more complete working example with the same dataset. Following Born et al. (2018) I will provide a computation of a synthetic control group for Great Britain to evaluate the Brexit impact on GDP by trying to mimic its real per capita gdp series using itself as a predictor jointly with real per capita government consumption, unemployment rate, and debt-to-GDP ratio.
 
@@ -66,6 +66,7 @@ The breakthrough here is that Synth often returns an extremely well-fitted model
                            control_units,       ## list of strings with indexes of all control units
                            index_variable,      ## string which tells us which variable is the index we used before
                            measured_variable,   ## string with the outcome variable
+                           Weights,             ## initial guess for weights (np.ndarray)
                            time_variable,       ## string with the time variable 
                            predict_time,        ## these are the time periods for which you are predicting the measured variable
                            optimize_time,       ## these are the time periods for which you are optimizing the RSS
@@ -83,6 +84,7 @@ The breakthrough here is that Synth often returns an extremely well-fitted model
         plt.ylabel(measured_variable)
         plt.xlabel(time_variable)
         plt.legend(loc='upper left')
+        plt.savefig('Synthetic_Control_Method.pdf')
         plt.show()
 
 

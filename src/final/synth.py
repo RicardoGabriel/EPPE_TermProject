@@ -10,6 +10,7 @@ def dataprep(foo,
              control_units, 
              index_variable, 
              measured_variable,
+             Weights,
              time_variable,
              predict_time, 
              optimize_time, 
@@ -93,8 +94,18 @@ def dataprep(foo,
         raise NameError("measured_variable contains non-numerical data")
     if not measured_variable in header:
         raise NameError("measured_variable not found")
+    #allow measured_variable to be in the predictors
     #if measured_variable in predictors:
     #    raise NameError("measured_variable cannot be in predictors")
+    
+    ## Weights
+    
+    if not type(Weights) in [np.ndarray]:
+        raise NameError("Weights should be a numpy.ndarray")
+    if not Weights.dtype in [int,float]:
+        raise NameError("Weights contain non-numerical data")
+    if not len(Weights)==len(control_units):
+        raise NameError("Weights should have same length than control_units")
 
     ## time_variable
 
@@ -409,6 +420,7 @@ def synth_tables(foo,
                  control_units, 
                  index_variable, 
                  measured_variable,
+                 Weights,
                  time_variable,
                  predict_time, 
                  optimize_time, 
