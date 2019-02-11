@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from scipy.optimize import fmin_slsqp, minimize
 import matplotlib.pyplot as plt
+from bld.project_paths import project_paths_join as ppj
+
 
 
 def dataprep(foo, 
@@ -462,8 +464,8 @@ def synth_tables(foo,
     plt.ylabel(measured_variable)
     plt.xlabel(time_variable)
     plt.legend(loc='upper left')
-    plt.savefig('Synthetic_Control_Method.pdf')
-    plt.show()
+    plt.savefig(ppj("OUT_FIGURES",'Synthetic_Control_Method.png'))
+    #plt.show()
     
     return
     

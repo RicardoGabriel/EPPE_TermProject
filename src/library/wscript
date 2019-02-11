@@ -2,4 +2,7 @@
 
 
 def build(ctx):
-    pass
+    ctx(
+        features='run_py_script',
+        source='synth.py'
+    )
