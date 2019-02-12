@@ -3,12 +3,14 @@
 
 def build(ctx):
 
-    ctx(
-        features='run_py_script',
-        source='Japan_SCM.py',
-        deps=[
-            ctx.path_to(ctx, 'IN_DATA', 'Dataset_TermPaper.xlsx'),
-        ],
-        target=ctx.path_to(ctx, 'OUT_FIGURES', 'Synthetic_Control_Method.png')
-    )
+    for model in 'Japan', 'GBR':
+
+        ctx(
+            features='run_py_script',
+            source='{}_SCM.py'.format(model),
+            deps=[
+                ctx.path_to(ctx, 'IN_DATA', 'Dataset_TermPaper.xlsx'),
+            ],
+            target=ctx.path_to(ctx, 'OUT_FIGURES', 'Synthetic_Control_Method_{}.png'.format(model))
+        )
 

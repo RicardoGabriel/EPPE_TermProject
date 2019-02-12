@@ -73,23 +73,25 @@
 
 If you are using this template, please cite this item from the references: \citet{GaudeckerEconProjectTemplates}
 
-\citet{Schelling69} example in the code is taken from \citet{StachurskiSargent13}
 
-The decision rule of an agent is the following:
-\input{formulas/decision_rule}
+\section{Methodology and Data}
+
+\subsection{The Synthetic Control Method}
+The dynamic effect of a policy intervention at a given time in a country can be expressed by: 
+\input{formulas/SCM}
 
 \begin{figure}
-    \caption{Segregation by cycle in the baseline \citet{Schelling69} model as in the \citet{StachurskiSargent13} example}
+    \caption{Synthetic Control Method for Japanese real per capita GDP}
     
-    \includegraphics[width=\textwidth]{../../out/figures/schelling_baseline}
+    \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_Japan}
 
 \end{figure}
 
 
 \begin{figure}
-    \caption{Segregation by cycle in the baseline \citet{Schelling69} model, limiting the number of potential moves per period to two}
+    \caption{Synthetic Control Method for Japanese real per capita GDP as in \citet{Born2018}}
     
-    \includegraphics[width=\textwidth]{../../out/figures/schelling_max_moves_2}
+    \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_GBR}
 
 \end{figure}
 
@@ -97,7 +99,7 @@ The decision rule of an agent is the following:
 
 
 
-
+\newpage
 
 \bibliography{refs}
 
