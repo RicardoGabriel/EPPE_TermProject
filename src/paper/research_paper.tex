@@ -12,10 +12,12 @@
 \usepackage{caption}
 \usepackage{mdwlist}
 \usepackage{xfrac}
+\usepackage{indentfirst}
 \usepackage{setspace}
 \usepackage{xcolor}
 \usepackage{subcaption}
 \usepackage{minibox}
+\usepackage{listings}
 % \usepackage{pdf14} % Enable for Manuscriptcentral -- can't handle pdf 1.5
 % \usepackage{endfloat} % Enable to move tables / figures to the end. Useful for some submissions.
 
@@ -55,7 +57,7 @@
 \author{Ricardo Duque Gabriel}
 
 \date{
-{\bf Preliminary -- please do not quote} 
+{\bf Version 1.0} 
 \\[1ex] 
 \today
 }
@@ -64,39 +66,76 @@
 
 
 \begin{abstract}
-	Some abstract here.
+	This is a term project for the Effective Programming Practices for Economists course at University of Bonn. In this project, I try to improve the Python \href{https://github.com/gnazareths/synth}{synth package} created by Guilherme Nazareth. I add flexibility to the package by allowing a manual imputation of an initial guess for the weights used to compute the synthetic control group allowing for a more customized usage. Then, I provide two minimum working examples using a sample of 32 OECD countries. The first one studies the impact of the Japanese financial crisis which started in 1997. The second one follows \citet{Born2018} and tries to measure the impact of the Brexit vote in the United Kingdom economy. Finally, it is worth noticing that this project uses the template from \citet{GaudeckerEconProjectTemplates} and can easily be replicated.
 \end{abstract}
+\vspace{5em}
+
+\textbf{JEL classification:} E65, F42, G01, P16 \\
+
+\textbf{Keywords:} Synthetic Control Method, Japan, Financial Crisis, United Kingdom, Brexit
+
 \clearpage
 
-\section{Introduction} % (fold)
-\label{sec:introduction}
+\section{Introduction to the Synthetic Control Method}
+\label{sec: Introduction}
 
-If you are using this template, please cite this item from the references: \citet{GaudeckerEconProjectTemplates}
+This term paper is related to the literature strand focused on the use of the synthetic control method (SCM) for quantitative inference in small-sample comparative studies which has been considered to be  the most important innovation in the policy evaluation literature in the last 15 years by \citet{Athey2017}. \citet{Abadie2003} were the first ones using this method by assessing the impact of terrorism on the economic growth of the Basque Country in Spain. A  simple  comparison  of  the  economic  performance  of the Basque country and the rest of Spain during the terrorism years would not reflect the impact of terrorism. Thus, the authors created a doppelganger (named synthetic Basque country) as the weighted average of other regions of Spain which could resemble most characteristics of the Basque Country but did not experience the terrorism. \\
+
+Other relevant papers using and developing the SCM are the ones from \citet{Abadie2010} who use the same approach to evaluate the effect of a large-scale tobacco control program that California implemented in 1988 by using other states from the U.S. to construct a synthetic California. \citet{Abadie2015} who quantify the impact of the 1990 German reunification on West Germany and \citet{Born2018} who compute the economic costs of the Brexit vote. These papers use a donor pool composed of countries from all over the world to construct the doppelgangers. \\
 
 
-\section{Methodology and Data}
 
-\subsection{The Synthetic Control Method}
 The dynamic effect of a policy intervention at a given time in a country can be expressed by: 
 \input{formulas/SCM}
 
-\begin{figure}
-    \caption{Synthetic Control Method for Japanese real per capita GDP}
+\section{Synth Package} % (fold)
+\label{synth}
+
+This term paper has the goal to improve an already existent Python package and apply it to two interesting case studies. I start by using the already existent \href{https://github.com/gnazareths/synth}{synth package} created by Guilherme Nazareth de Souza. 
+
+
+
+
+I add some flexibility to the package by allowing a manual imputation of an initial guess for the weights used to compute the synthetic control group (henceforth, doppelganger). The common practice is to start with equal weights for all countries nevertheless, one might have a good idea of what the weights are, especially if one is doing a replication work just as I will do later on.\\
+
+In order to have a correct implementation of this new feature I also write some tests: 
+\begin{lstlisting}
+## Weights
+if not type(Weights) in [np.ndarray]:
+    raise NameError("Weights should be a numpy.ndarray")
+if not Weights.dtype in [int,float]:
+    raise NameError("Weights contain non-numerical data")
+if not len(Weights)==len(control_units):
+    raise NameError("Weights should have same length than control_units")
+\end{lstlisting}
+
+
+
+\section{Case Studies}
+
+\subsection{The Japanese 1997 financial crisis}
+\label{Japan}
+
+
+\begin{figure} [h]
+    \caption{Synthetic Control Method for the Japanese real per capita GDP}
     
     \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_Japan}
 
 \end{figure}
 
+\subsection{The output effect of the Brexit vote}
+\label{Brexit}
 
-\begin{figure}
-    \caption{Synthetic Control Method for Japanese real per capita GDP as in \citet{Born2018}}
+\begin{figure} [h]
+    \caption{Synthetic Control Method for the British real per capita GDP as in \citet{Born2018}}
     
     \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_GBR}
 
 \end{figure}
 
-% section introduction (end)
 
+\section{Conclusion}
 
 
 \newpage
