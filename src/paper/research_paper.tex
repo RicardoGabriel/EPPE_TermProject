@@ -12,7 +12,6 @@
 \usepackage{caption}
 \usepackage{mdwlist}
 \usepackage{xfrac}
-\usepackage{indentfirst}
 \usepackage{setspace}
 \usepackage{xcolor}
 \usepackage{subcaption}
@@ -79,14 +78,25 @@
 \section{Introduction to the Synthetic Control Method}
 \label{sec: Introduction}
 
-This term paper is related to the literature strand focused on the use of the synthetic control method (SCM) for quantitative inference in small-sample comparative studies which has been considered to be  the most important innovation in the policy evaluation literature in the last 15 years by \citet{Athey2017}. \citet{Abadie2003} were the first ones using this method by assessing the impact of terrorism on the economic growth of the Basque Country in Spain. A  simple  comparison  of  the  economic  performance  of the Basque country and the rest of Spain during the terrorism years would not reflect the impact of terrorism. Thus, the authors created a doppelganger (named synthetic Basque country) as the weighted average of other regions of Spain which could resemble most characteristics of the Basque Country but did not experience the terrorism. \\
+This term paper is related to the literature strand focused on the use of the synthetic control method (SCM) for quantitative inference in small-sample comparative studies which has been considered to be  the most important innovation in the policy evaluation literature in the last 15 years by \citet{Athey2017}. \citet{Abadie2003} were the first ones to use this method by assessing the impact of terrorism on the economic growth of the Basque Country in Spain. A  simple  comparison  of  the  economic  performance  of the Basque country and the rest of Spain during the terrorism years would not reflect the impact of terrorism. Thus, the authors created a doppelganger (named synthetic Basque country) as the weighted average of other regions of Spain which could resemble most characteristics of the Basque Country but did not experience the terrorism. \\
 
 Other relevant papers using and developing the SCM are the ones from \citet{Abadie2010} who use the same approach to evaluate the effect of a large-scale tobacco control program that California implemented in 1988 by using other states from the U.S. to construct a synthetic California. \citet{Abadie2015} who quantify the impact of the 1990 German reunification on West Germany and \citet{Born2018} who compute the economic costs of the Brexit vote. These papers use a donor pool composed of countries from all over the world to construct the doppelgangers. \\
 
-
-
 The dynamic effect of a policy intervention at a given time in a country can be expressed by: 
 \input{formulas/SCM}
+where $Y_{it}^I$ represents the outcome of country i in period t and $Y_{it}^C$ is the outcome country i would have had in period t absent from the policy intervention and it can not be observed. \\
+
+To evaluate whether such policy intervention had any impact on the economy of a country one must have a counterfactual, i.e., what this country's economic activity would have been if it had not have such intervention. This comparison unit is of crucial importance for a correct policy evaluation as represented by the equation above. Ideally, the counterfactual should be identical to the treated unit in all dimensions except for the treatment assignment. When the treated unit is a country, this ``ideal" control unit rarely exists in observed data as countries differ widely across demographic, economic, legislative, among other characteristics \citet{Born2018}. Thus, we can not directly use countries which were not treated as a counterfactual because they do not truly represent what would have happened to the treated unit if it had not been assigned into treatment. \\
+
+Suppose that we have $N+1$ countries and, without loss of generality, consider that only the first one $i=1$ is exposed to the intervention of interest, so that the remaining regions are potential controls (constituting our ``donor pool"). \citet{Abadie2010} show that an unbiased estimate for the counterfactual outcome can be obtained by assigning a weight $w$ to each control country, i.e. $\sum_{i=2}^{N+1}w^*_i Y_{it} = \hat{Y}_{it}^C$ for $t\geq T_0$. Therefore, an unbiased estimate of the previous equation's $\tau_{it}$ can be computed by:
+\input{formulas/SCM2}
+The weights assigned to the countries in the donor pool are chosen to minimize the preintervention differences between the treated unit and the doppelganger in terms of the predictors of the outcome. Formally, we let $X_1$ denote the ($r \times 1$) vector of observations for the outcome variable in the treated unit and let $X_0$ denote a ($r \times d$) matrix with observations for the donor countries' outcome variable. Finally, let $W$ denote the ($d \times 1$) vector of weights $w_j, j=1,...,d$ (from \citet{Born2018}). Then, the doppelganger is defined by $W^*$ which minimizes the following mean squared error: 
+\input{formulas/SCM3}
+subject to $w_j \geq 0$ for $j=1,...,d$ and $\sum_{j=1}^{d}w_j = 1$. In this expression, V is a ($d \times d$) symmetric and positive semidefinite matrix.\\
+
+On the one hand, this approach has several advantages. Firstly, it is a transparent method with the relative contribution of each control unit to the counterfactual of interest being explicit by the used weights to construct the synthetic control group. The similarities between the unit affected by the  event and the synthetic control are also clearly observed in terms of preintervention outcomes. Secondly, SCM is safeguarded against extrapolation as the weights are restricted to be positive and sum to one (\citet{Abadie2010}). This avoids the estimation of ``extreme counterfactuals” that fall far outside the convex hull of the data. Yet, interpolation bias might arise if the potential control units have not been selected appropriately and present characteristics that are far from the treated unit. \\
+
+On the other hand, SCM requires some assumptions to be made (\citet{Abadie2010}). The first one is that the treatment is exclusively assigned to the treated country and thus, that there are no spillover effects. Secondly, since the weights are constructed according to the preintervention characteristics, one has to assume that there are no differentiated shocks in the post treatment period in the countries which constitute the donor pool. Third, the intervention has no effect on the outcome before the implementation period. Otherwise, one would have to redefine the date of treatment to an earlier period. \\
 
 \section{Synth Package} % (fold)
 \label{synth}
