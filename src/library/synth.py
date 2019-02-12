@@ -454,6 +454,9 @@ def synth_tables(foo,
     print ("---")
     print (controls_weights)
 
+    with open('Table.tex','w') as tf:
+        tf.write(controls_weights.to_latex())
+
     estimates = estimated_outcomes
     actual_values = Y1.transpose()[0]
     plt.plot(range(len(estimates)),estimates, 'r--', label="Synthetic Control")

@@ -19,12 +19,50 @@
 \usepackage{listings}
 % \usepackage{pdf14} % Enable for Manuscriptcentral -- can't handle pdf 1.5
 % \usepackage{endfloat} % Enable to move tables / figures to the end. Useful for some submissions.
-
-
-
+\usepackage{apacite}
 \usepackage{natbib}
-\bibliographystyle{rusnat}
 
+%%%% Python code made prettier:
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{10} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{10}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttm,
+otherkeywords={self},             % Add keywords here
+keywordstyle=\ttb\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+frame=tb,                         % Any extra options here
+showstringspaces=false            % 
+}}
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
 
 
 
@@ -39,7 +77,6 @@
     runcolor=black,
     urlcolor=black
 }
-
 
 \widowpenalty=10000
 \clubpenalty=10000
@@ -65,7 +102,7 @@
 
 
 \begin{abstract}
-	This is a term project for the Effective Programming Practices for Economists course at University of Bonn. In this project, I try to improve the Python \href{https://github.com/gnazareths/synth}{synth package} created by Guilherme Nazareth. I add flexibility to the package by allowing a manual imputation of an initial guess for the weights used to compute the synthetic control group allowing for a more customized usage. Then, I provide two minimum working examples using a sample of 32 OECD countries. The first one studies the impact of the Japanese financial crisis which started in 1997. The second one follows \citet{Born2018} and tries to measure the impact of the Brexit vote in the United Kingdom economy. Finally, it is worth noticing that this project uses the template from \citet{GaudeckerEconProjectTemplates} and can easily be replicated.
+	This is a term project for the Effective Programming Practices for Economists course at University of Bonn. In this project, I try to improve the Python \href{https://github.com/gnazareths/synth}{synth package} created by Guilherme Nazareth. I add flexibility to the package by allowing a manual imputation of an initial guess for the weights used to compute the synthetic control group allowing for a more customized usage. Then, I provide two minimum working examples using a sample of 32 OECD countries. The first one studies the impact of the Japanese financial crisis which started in 1997. The second one follows \citet{Born2018} and tries to measure the impact of the Brexit vote in the United Kingdom economy. Finally, it is worth noticing that this project uses the template from \citet{GaudeckerEconProjectTemplates} and can be easily replicated.
 \end{abstract}
 \vspace{5em}
 
@@ -88,11 +125,11 @@ where $Y_{it}^I$ represents the outcome of country i in period t and $Y_{it}^C$ 
 
 To evaluate whether such policy intervention had any impact on the economy of a country one must have a counterfactual, i.e., what this country's economic activity would have been if it had not have such intervention. This comparison unit is of crucial importance for a correct policy evaluation as represented by the equation above. Ideally, the counterfactual should be identical to the treated unit in all dimensions except for the treatment assignment. When the treated unit is a country, this ``ideal" control unit rarely exists in observed data as countries differ widely across demographic, economic, legislative, among other characteristics \citet{Born2018}. Thus, we can not directly use countries which were not treated as a counterfactual because they do not truly represent what would have happened to the treated unit if it had not been assigned into treatment. \\
 
-Suppose that we have $N+1$ countries and, without loss of generality, consider that only the first one $i=1$ is exposed to the intervention of interest, so that the remaining regions are potential controls (constituting our ``donor pool"). \citet{Abadie2010} show that an unbiased estimate for the counterfactual outcome can be obtained by assigning a weight $w$ to each control country, i.e. $\sum_{i=2}^{N+1}w^*_i Y_{it} = \hat{Y}_{it}^C$ for $t\geq T_0$. Therefore, an unbiased estimate of the previous equation's $\tau_{it}$ can be computed by:
+Let $d$ be the number of available control countries (constituting our ``donor pool"), suppose that we have $d+1$ countries and, without loss of generality, consider that only the last one $i=d+1$ is exposed to the intervention of interest. \citet{Abadie2010} show that an unbiased estimate for the counterfactual outcome can be obtained by assigning a weight $w$ to each control country, i.e. $\sum_{j=1}^{d}w^*_j Y_{it} = \hat{Y}_{it}^C$ for $t \geq T_0$. Therefore, an unbiased estimate of the previous equation's $\tau_{it}$ can be computed by:
 \input{formulas/SCM2}
-The weights assigned to the countries in the donor pool are chosen to minimize the preintervention differences between the treated unit and the doppelganger in terms of the predictors of the outcome. Formally, we let $X_1$ denote the ($r \times 1$) vector of observations for the outcome variable in the treated unit and let $X_0$ denote a ($r \times d$) matrix with observations for the donor countries' outcome variable. Finally, let $W$ denote the ($d \times 1$) vector of weights $w_j, j=1,...,d$ (from \citet{Born2018}). Then, the doppelganger is defined by $W^*$ which minimizes the following mean squared error: 
+The weights assigned to the countries in the donor pool are chosen to minimize the preintervention differences between the treated unit and the doppelganger in terms of the predictors of the outcome variable. Formally, let $Z_1$ denote the ($P \times 1$) vector of observations for the outcome variable in the treated unit and let $Z_0$ denote a ($P \times d$) matrix with observations for the donor countries' predictors variables, where P is the number of such variables. Finally, let $W$ denote the ($d \times 1$) vector of nonnegative weights $w_j, j=1,...,d$ which sum to one. Then, the doppelganger is defined by $W^*$ which minimizes the following mean squared error:
 \input{formulas/SCM3}
-subject to $w_j \geq 0$ for $j=1,...,d$ and $\sum_{j=1}^{d}w_j = 1$. In this expression, V is a ($d \times d$) symmetric and positive semidefinite matrix.\\
+subject to $w_j \geq 0$ for $j=1,...,d$ and $\sum_{j=1}^{d}w_j = 1$. In this expression, V is a ($d \times d$) symmetric and positive semidefinite matrix. As \citet{Abadie2003}, one can choose V such that the outcome variable path for the treated country during th pre-treatment period is best reproduced by the resulting doppelganger.\\
 
 On the one hand, this approach has several advantages. Firstly, it is a transparent method with the relative contribution of each control unit to the counterfactual of interest being explicit by the used weights to construct the synthetic control group. The similarities between the unit affected by the  event and the synthetic control are also clearly observed in terms of preintervention outcomes. Secondly, SCM is safeguarded against extrapolation as the weights are restricted to be positive and sum to one (\citet{Abadie2010}). This avoids the estimation of ``extreme counterfactuals” that fall far outside the convex hull of the data. Yet, interpolation bias might arise if the potential control units have not been selected appropriately and present characteristics that are far from the treated unit. \\
 
@@ -103,13 +140,133 @@ On the other hand, SCM requires some assumptions to be made (\citet{Abadie2010})
 
 This term paper has the goal to improve an already existent Python package and apply it to two interesting case studies. I start by using the already existent \href{https://github.com/gnazareths/synth}{synth package} created by Guilherme Nazareth de Souza. 
 
+In his implementation, Synth uses a nested optimization with SciPy quadratic programming minimization functions optimize.minimize and optimize.fmin\_slsqp. To achieve this, he calls the function get\_v\_1, which finds the variable v that minimizes the function get\_v\_0, which in turn calls the function get\_w and returns the residual sum of squares associated with given values of v and w. This last function, get\_w, finds the variable w that minimizes the rss associated with v and any values of w.
 
+\begin{python}
+def w_rss(w, v, x0, x1):
+    k = len(x1)
+    importance = np.zeros((k,k))
+    np.fill_diagonal(importance, v)
+    predictions = np.dot(x0,w)
+    errors = x1 - predictions
+    weighted_errors = np.dot(importance, errors)
+    weighted_rss = sum(weighted_errors**2)[0]
+    return weighted_rss
 
+def w_constraint(w, v, x0, x1):
+    return np.sum(w) - 1
 
-I add some flexibility to the package by allowing a manual imputation of an initial guess for the weights used to compute the synthetic control group (henceforth, doppelganger). The common practice is to start with equal weights for all countries nevertheless, one might have a good idea of what the weights are, especially if one is doing a replication work just as I will do later on.\\
+def v_rss(w, z0, z1):
+    predictions = np.dot(z0,w)
+    errors = z1 - predictions
+    rss = sum(errors ** 2)[0]
+    return rss
 
-In order to have a correct implementation of this new feature I also write some tests: 
-\begin{lstlisting}
+def get_w(w, v, x0, x1):
+    weights = fmin_slsqp(w_rss, w, f_eqcons=w_constraint, 
+             bounds=[(0.0, 1.0)]*len(w),
+             args=(v, x0, x1), disp=False, full_output=True)[0]
+    return weights
+
+def get_v_0(v, w, x0, x1, z0, z1):
+    weights = get_w(w,v,x0,x1)
+    rss = v_rss(weights, z0, z1)
+    return rss
+
+def get_v_1(v, w, x0, x1, z0, z1):
+    result = fmin_slsqp(get_v_0, v, args=(w, x0, x1, z0, z1), 
+            bounds=[(0.0, 1.0)]*len(v))
+    return result
+
+def get_estimate(x0, x1, z0, z1, y0, w):
+    (k,j) = x0.shape
+    v = [1.0]*k
+    predictors = get_v_1(v, w, x0, x1, z0, z1)
+    controls = np.array(get_w(w, predictors, x0, x1)).transpose()
+    estimates = np.dot(y0,controls)
+    return estimates, predictors, controls
+\end{python}
+
+Upon finding the optimal vector $W^*$ (and, by definition, $V$ as well), synth multiplies the $Z_0$ by $W$ to find an estimate (or a counterfactual) of the $Z_1$ vector. Synth can plot both the estimate $Z_1$ and the actual $Z_1$, so the researcher can compare how well the model represents the actual data:\\
+
+\begin{python}
+def synth_tables(foo, 
+                 predictors, 
+                 treated_unit, 
+                 control_units, 
+                 index_variable, 
+                 measured_variable,
+                 Weights,
+                 time_variable,
+                 predict_time, 
+                 optimize_time, 
+                 plot_time,
+                 function="mean"):
+
+    control_units.sort()
+    predictors.sort()
+    plot_time.sort()
+
+    X0, X1, Y0, Y1, Z0, Z1 = dataprep(foo, 
+                 predictors, 
+                 treated_unit, 
+                 control_units, 
+                 index_variable, 
+                 measured_variable,
+                 Weights,
+                 time_variable,
+                 predict_time, 
+                 optimize_time, 
+                 plot_time, 
+                 function="mean")
+
+    (est, predict, ctrls) = get_estimate(X0, X1, Z0, Z1, Y0, Weights)
+    predict = [ round(elem,6) for elem in predict ]
+    ctrls = [ round(elem,6) for elem in ctrls ]
+    estimated_predictors = np.dot(X0,ctrls).transpose()
+    predictors_table = pd.DataFrame({'Synthetic':estimated_predictors, 
+                       'Actual': X1.transpose()[0]}, index=predictors)
+    estimated_outcomes = np.dot(Y0,ctrls)
+    outcomes_table = pd.DataFrame({'Synthetic':estimated_outcomes, 
+                    'Actual':Y1.transpose()[0]},index=plot_time)
+    predictors_weights = pd.DataFrame({'Weight':predict}, index=predictors)
+    controls_weights = pd.DataFrame({'Weight':ctrls}, index=control_units)
+
+    print ("Predictors Table")
+    print ("---")
+    print (predictors_table)
+    print (" ")
+    print ("Outcomes Table")
+    print ("---")
+    print (outcomes_table)
+    print (" ")
+    print ("Predictors' Weights")
+    print ("---")
+    print (predictors_weights)
+    print (" ")
+    print ("Controls' Weights")
+    print ("---")
+    print (controls_weights)
+
+    estimates = estimated_outcomes
+    actual_values = Y1.transpose()[0]
+    plt.plot(range(len(estimates)),estimates, 'r--', 
+        label="Synthetic Control")
+    plt.plot(range(len(estimates)),actual_values, 'b-', 
+        label="Actual Data")
+    plt.axvline(x=predict_time[-1])
+    plt.title("Synthetic Control Model")
+    plt.ylabel(measured_variable)
+    plt.xlabel(time_variable)
+    plt.legend(loc='upper left')
+    plt.savefig('Synthetic_Control_Method.png')
+    plt.show()
+    
+    return
+\end{python}
+
+I add some flexibility to the package by allowing a manual imputation of an initial guess for the weights used to compute the synthetic control group (henceforth, doppelganger). The common practice is to start with equal weights for all countries nevertheless, one might have a good idea of what the weights are, especially if one is doing a replication work just as I will do later on. In order to have a correct implementation of this new feature I also add some tests to the package: \\
+\begin{python}
 ## Weights
 if not type(Weights) in [np.ndarray]:
     raise NameError("Weights should be a numpy.ndarray")
@@ -117,7 +274,7 @@ if not Weights.dtype in [int,float]:
     raise NameError("Weights contain non-numerical data")
 if not len(Weights)==len(control_units):
     raise NameError("Weights should have same length than control_units")
-\end{lstlisting}
+\end{python}
 
 
 
@@ -127,37 +284,48 @@ if not len(Weights)==len(control_units):
 \label{Japan}
 
 
-\begin{figure} [h]
-    \caption{Synthetic Control Method for the Japanese real per capita GDP}
-    
-    \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_Japan}
 
+[Insert weights table about here]\\
+
+Figure \ref{JPN} displays real per capita GDP for Japan and its doppelganger during the period between 1995q1 to 1998q4. From this figure one can conclude that there is some evidence pointing out to a loss of about 2000 euros per capita. \\
+
+\begin{figure}[!htbp]
+    \caption{Synthetic Control Method for the Japanese real per capita GDP}
+    \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_Japan}
+    \label{JPN}
 \end{figure}
+
+\clearpage
 
 \subsection{The output effect of the Brexit vote}
 \label{Brexit}
 
-\begin{figure} [h]
-    \caption{Synthetic Control Method for the British real per capita GDP as in \citet{Born2018}}
-    
-    \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_GBR}
+In this subsection, I follow closely the work by \citet{Born2018} to measure the immediate output effect of the Brexit vote. In order to do
+that I contrast the output performance in the UK and in the doppelganger economy in the quarters following the referendum shock. First, I start by computing the doppelganger for the UK using the synth package.\\
 
+Table (ref) displays the weights of each control country in the synthetic UK. The weights reported in it indicate that UK's real per capita GDP is best reproduced by a combination of ---. All other countries in the donor pool are assigned zero W-weights.\\
+
+[Insert weights table about here]\\
+
+Figure \ref{GBR} displays real per capita GDP for the UK and its doppelganger during the period between 1995q1 to 2018q3. From this figure one can conclude that there is some evidence pointing out to a loss of about 1000 euros per capita. \\
+
+\begin{figure}[!htbp]
+    \caption{Synthetic Control Method for the British real per capita GDP as in Born2018}
+    \includegraphics[width=\textwidth]{../../out/figures/Synthetic_Control_Method_GBR}
+    \label{GBR}
 \end{figure}
 
-
+\clearpage 
 \section{Conclusion}
+In this term paper, I improved an already existent python package about the synthetic control method. Then, using a sample of 32 OECD countries I perform two case studies. The first one studies the impact of the Japanese financial crisis which started in 1997. Here, I found that the financial crisis had a very negative impact on the Japanese economy - the real per capita GDP was 2000 lower than if the country had never gone through such episode.\\
 
+The second one follows \citet{Born2018} and tries to measure the impact of the Brexit vote in the United Kingdom economy. Here, I also found a negative effect - the real per capita GDP was 1000 euros lower than if the Brexit vote had never occured.\\
 
-\newpage
+Finally, I adjusted this project such that it uses the template from \citet{GaudeckerEconProjectTemplates} which can be easily replicated.
 
+\clearpage
+
+\bibliographystyle{apacite}
 \bibliography{refs}
-
-
-
-% \appendix
-
-% The chngctr package is needed for the following lines.
-% \counterwithin{table}{section}
-% \counterwithin{figure}{section}
 
 \end{document}

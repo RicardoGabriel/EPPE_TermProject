@@ -43,4 +43,7 @@ synth_tables(  df,
                [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
                )
 
+with open('Table_Japan.tex','w') as tf:
+     tf.write(controls_weights.to_latex())
+
 plt.savefig(ppj("OUT_FIGURES",'Synthetic_Control_Method_Japan.png'))
