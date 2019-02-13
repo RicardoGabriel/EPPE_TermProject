@@ -1,7 +1,7 @@
 # EPPE Term Project - Synth Package
 Term Project for the Effective Programming Practices for Economists course at University of Bonn
 
-The deliverables of this project besides all the coding are the research_paper.pdf and the project_documentation.pdf which can be obtained by running the waf.py feature.
+The deliverables of this project besides all the coding are the research_paper.pdf and the project_documentation.pdf
 
 All remaining errors are exclusively my own.
 
