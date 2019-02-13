@@ -1,11 +1,4 @@
 '''
-# EPPE Term Project - Synth Package
-Term Project for the Effective Programming Practices for Economists course at University of Bonn
-
-## Disclosure
-This package was first created by @gnazareths (https://github.com/gnazareths/synth) and I will try to improve it and 
-utilize it for my term paper in EPPE (University of Bonn) by March 7th, 2019.
-
 It has two main parts. In the first it is done the data preparation part. 
 In the second, the most important, is where the synthetic control group is constructed as explained in the research paper.
 
