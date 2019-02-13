@@ -123,13 +123,15 @@ The dynamic effect of a policy intervention at a given time in a country can be 
 \input{formulas/SCM}
 where $Y_{it}^I$ represents the outcome of country i in period t and $Y_{it}^C$ is the outcome country i would have had in period t absent from the policy intervention and it can not be observed. \\
 
-To evaluate whether such policy intervention had any impact on the economy of a country one must have a counterfactual, i.e., what this country's economic activity would have been if it had not have such intervention. This comparison unit is of crucial importance for a correct policy evaluation as represented by the equation above. Ideally, the counterfactual should be identical to the treated unit in all dimensions except for the treatment assignment. When the treated unit is a country, this ``ideal" control unit rarely exists in observed data as countries differ widely across demographic, economic, legislative, among other characteristics \citet{Born2018}. Thus, we can not directly use countries which were not treated as a counterfactual because they do not truly represent what would have happened to the treated unit if it had not been assigned into treatment. \\
+To evaluate whether such policy intervention had any impact on the economy of a country one must have a counterfactual, i.e., what this country's economic activity would have been if it had not have such intervention. This comparison unit is of crucial importance for a correct policy evaluation as represented by the equation above. Ideally, the counterfactual should be identical to the treated unit in all dimensions except for the treatment assignment. When the treated unit is a country, this ``ideal'' control unit rarely exists in observed data as countries differ widely across demographic, economic, legislative, among other characteristics \citet{Born2018}. Thus, we can not directly use countries which were not treated as a counterfactual because they do not truly represent what would have happened to the treated unit if it had not been assigned into treatment. \\
 
-Let $d$ be the number of available control countries (constituting our ``donor pool"), suppose that we have $d+1$ countries and, without loss of generality, consider that only the last one $i=d+1$ is exposed to the intervention of interest. \citet{Abadie2010} show that an unbiased estimate for the counterfactual outcome can be obtained by assigning a weight $w$ to each control country, i.e. $\sum_{j=1}^{d}w^*_j Y_{it} = \hat{Y}_{it}^C$ for $t \geq T_0$. Therefore, an unbiased estimate of the previous equation's $\tau_{it}$ can be computed by:
+Let $d$ be the number of available control countries (constituting our ``donor pool''), suppose that we have $d+1$ countries and, without loss of generality, consider that only the last one $i=d+1$ is exposed to the intervention of interest. \citet{Abadie2010} show that an unbiased estimate for the counterfactual outcome can be obtained by assigning a weight $w$ to each control country, i.e. $\sum_{j=1}^{d}w^*_j Y_{it} = \hat{Y}_{it}^C$ for $t \geq T_0$. Therefore, an unbiased estimate of the previous equation's $\tau_{it}$ can be computed by:
 \input{formulas/SCM2}
-The weights assigned to the countries in the donor pool are chosen to minimize the preintervention differences between the treated unit and the doppelganger in terms of the predictors of the outcome variable. Formally, let $Z_1$ denote the ($P \times 1$) vector of observations for the outcome variable in the treated unit and let $Z_0$ denote a ($P \times d$) matrix with observations for the donor countries' predictors variables, where P is the number of such variables. Finally, let $W$ denote the ($d \times 1$) vector of nonnegative weights $w_j, j=1,...,d$ which sum to one. Then, the doppelganger is defined by $W^*$ which minimizes the following mean squared error:
+The weights assigned to the countries in the donor pool are chosen to minimize the preintervention differences between the treated unit and the doppelganger in terms of the predictors of the outcome variable. Formally, let $X_1$ denote the matrix of observations for the predictor variables in the treated unit and let $X_0$ denote a matrix with observations for the donor countries' predictor variables. Finally, let $W$ denote the ($d \times 1$) vector of nonnegative weights $w_j$, $j=1,...,d$ which sum to one. Then, the doppelganger is defined by $W^*$ which minimizes the following mean squared error:
 \input{formulas/SCM3}
-subject to $w_j \geq 0$ for $j=1,...,d$ and $\sum_{j=1}^{d}w_j = 1$. In this expression, V is a ($d \times d$) symmetric and positive semidefinite matrix. As \citet{Abadie2003}, one can choose V such that the outcome variable path for the treated country during th pre-treatment period is best reproduced by the resulting doppelganger.\\
+subject to $w_j \geq 0$ for $j=1,...,d$ and $\sum_{j=1}^{d}w_j = 1$. In this expression, V is a ($d \times d$) diagonal matrix. As \citet{Abadie2003}, one can choose V such that the outcome variable path for the treated country during the pre-treatment period is best reproduced by the resulting doppelganger. $V^*$ minimizes:
+\input{formulas/SCM4}
+in which $Z_0$ is the matrix of outcomes for control units, $Z_1$ is the matrix of outcomes for the treated unit. So, $W^*(V)$ is the optimal combination of weights given the matrix V. \\
 
 On the one hand, this approach has several advantages. Firstly, it is a transparent method with the relative contribution of each control unit to the counterfactual of interest being explicit by the used weights to construct the synthetic control group. The similarities between the unit affected by the  event and the synthetic control are also clearly observed in terms of preintervention outcomes. Secondly, SCM is safeguarded against extrapolation as the weights are restricted to be positive and sum to one (\citet{Abadie2010}). This avoids the estimation of ``extreme counterfactuals” that fall far outside the convex hull of the data. Yet, interpolation bias might arise if the potential control units have not been selected appropriately and present characteristics that are far from the treated unit. \\
 
@@ -277,15 +279,18 @@ if not len(Weights)==len(control_units):
 \end{python}
 
 
+\clearpage
 
 \section{Case Studies}
 
 \subsection{The Japanese 1997 financial crisis}
 \label{Japan}
 
+Table \ref{Table_Japan} displays the weights of each control country in the synthetic Japan. The weights reported in it indicate that the Japanese real per capita GDP is best reproduced by a combination of Australia, Switzerland, and The Netherlands. All other countries in the donor pool are assigned zero W-weights.\\
 
+\input{../../out/tables/Table_Japan.tex} \label{Table_Japan} \\
 
-[Insert weights table about here]\\
+\clearpage
 
 Figure \ref{JPN} displays real per capita GDP for Japan and its doppelganger during the period between 1995q1 to 1998q4. From this figure one can conclude that there is some evidence pointing out to a loss of about 2000 euros per capita. \\
 
@@ -303,9 +308,11 @@ Figure \ref{JPN} displays real per capita GDP for Japan and its doppelganger dur
 In this subsection, I follow closely the work by \citet{Born2018} to measure the immediate output effect of the Brexit vote. In order to do
 that I contrast the output performance in the UK and in the doppelganger economy in the quarters following the referendum shock. First, I start by computing the doppelganger for the UK using the synth package.\\
 
-Table (ref) displays the weights of each control country in the synthetic UK. The weights reported in it indicate that UK's real per capita GDP is best reproduced by a combination of ---. All other countries in the donor pool are assigned zero W-weights.\\
+Table \ref{Table_GBR} displays the weights of each control country in the synthetic UK. The weights reported in it indicate that UK's real per capita GDP is best reproduced by a combination of Canada, Hungary, Italy, Japan, Korea, Norway, Portugal and USA. All other countries in the donor pool are assigned zero W-weights.\\
 
-[Insert weights table about here]\\
+\input{../../out/tables/Table_GBR.tex} \label{Table_GBR} \\
+
+\newpage
 
 Figure \ref{GBR} displays real per capita GDP for the UK and its doppelganger during the period between 1995q1 to 2018q3. From this figure one can conclude that there is some evidence pointing out to a loss of about 1000 euros per capita. \\
 

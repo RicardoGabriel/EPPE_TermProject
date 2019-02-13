@@ -11,6 +11,20 @@ def build(ctx):
             deps=[
                 ctx.path_to(ctx, 'IN_DATA', 'Dataset_TermPaper.xlsx'),
             ],
-            target=ctx.path_to(ctx, 'OUT_FIGURES', 'Synthetic_Control_Method_{}.png'.format(model))
+            target=[
+            	ctx.path_to(ctx, 'OUT_FIGURES', 'Synthetic_Control_Method_{}.png'.format(model)),
+            	ctx.path_to(ctx, 'OUT_TABLES', 'Weights_{}.pkl'.format(model))
+        	]
         )
 
+    for model in 'Japan', 'GBR':
+    	ctx(
+    		features='run_py_script',
+    		source='{}_tables.py'.format(model),
+    		deps=[
+    			ctx.path_to(ctx, 'OUT_TABLES', 'Weights_{}.pkl'.format(model)),
+    		],
+    		target=[
+    			ctx.path_to(ctx, 'OUT_TABLES', 'Table_{}.tex'.format(model))
+    		]
+    	)

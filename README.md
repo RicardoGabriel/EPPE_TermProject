@@ -1,10 +1,14 @@
 # EPPE Term Project - Synth Package
 Term Project for the Effective Programming Practices for Economists course at University of Bonn
 
+The deliverables of this project besides all the coding are the research_paper.pdf and the project_documentation.pdf.
+
+All remaining errors are exclusively my own.
+
 ## Disclosure
 This package was first created by @gnazareths (https://github.com/gnazareths/synth) and I will try to improve it and utilize it for my term paper in EPPE (University of Bonn) by March 7th, 2019.
 
-Firstly, I will try to face current limitation number 2 by implementing a change in the code which will transform an excel file in a panda dataframe using the method read_excel() find in https://pythonspot.com/read-excel-with-pandas/
+Firstly, I will try to face current limitation number 2 by implementing a change in the code which will transform an excel file in a panda dataframe using the method read_excel() find in https://pythonspot.com/read-excel-with-pandas/.
 
 Secondly, I will provide a minimum working example with a real dataset for 32 OECD countries. I will provide a computation of a synthetic control group for Japan by trying to mimic its real per capita gdp series using its real per capita gdp as predictor.
 
@@ -34,22 +38,48 @@ W* is the set of weights that minimizes (X0 W - X1)'V(X0  W - X1), in which X0 i
 
 In this implementation, Synth uses a nested optimization with SciPy quadratic programming minimization functions optimize.minimize and optimize.fmin_slsqp. To achieve this, I call my function get_v_1, which finds the variable v that minimizes the function get_v_0, which in turn calls the function get_w and returns the residual sum of squares associated with given values of v and w. This last function, get_w, finds the variable w that minimizes the rss associated with v and any values of w.
 
+    def w_rss(w, v, x0, x1):
+      k = len(x1)
+      importance = np.zeros((k,k))
+      np.fill_diagonal(importance, v)
+      predictions = np.dot(x0,w)
+      errors = x1 - predictions
+      weighted_errors = np.dot(importance, errors)
+      weighted_rss = sum(weighted_errors**2)[0]
+      return weighted_rss
+
+    def w_constraint(w, v, x0, x1):
+      return np.sum(w) - 1
+
+    def v_rss(w, z0, z1):
+      predictions = np.dot(z0,w)
+      errors = z1 - predictions
+      rss = sum(errors ** 2)[0]
+      return rss
+
     def get_w(w, v, x0, x1):
-        result = fmin_slsqp(w_rss, w, f_eqcons=w_constraint, bounds=[(0.0, 1.0)]*len(w),
-                 args=(v, x0, x1), disp=False, full_output=True)
-        weights = result[0]
-        return weights
+      weights = fmin_slsqp(w_rss, w, f_eqcons=w_constraint, 
+             bounds=[(0.0, 1.0)]*len(w),
+             args=(v, x0, x1), disp=False, full_output=True)[0]
+      return weights
 
     def get_v_0(v, w, x0, x1, z0, z1):
-        weights = fmin_slsqp(w_rss, w, f_eqcons=w_constraint, bounds=[(0.0, 1.0)]*len(w),
-                 args=(v, x0, x1), disp=False, full_output=True)[0]
-        rss = v_rss(weights, z0, z1)
-        return rss
+      weights = get_w(w,v,x0,x1)
+      rss = v_rss(weights, z0, z1)
+      return rss
 
-    def get_v_1(v, w, x0, x1, z0, z1):
-        result = minimize(get_v_0, v, args=(w, x0, x1, z0, z1), bounds=[(0.0, 1.0)]*len(v))
-        importance = result.x
-        return importance
+    def get_v_1(v, w, x0, x1, z0, z1):  
+      result = fmin_slsqp(get_v_0, v, args=(w, x0, x1, z0, z1), 
+              bounds=[(0.0, 1.0)]*len(v))
+      return result
+
+    def get_estimate(x0, x1, z0, z1, y0, w):
+      (k,j) = x0.shape
+      v = [1.0]*k
+      predictors = get_v_1(v, w, x0, x1, z0, z1)
+      controls = np.array(get_w(w, predictors, x0, x1)).transpose()
+      estimates = np.dot(y0,controls)
+      return estimates, predictors, controls
 
 Upon finding the optimal vector W (and, by definition, V as well), Synth multiplies the Z0 (outcomes of the control units) by W to find an estimate (or a counterfactual) of the Z1 vector. Synth can plot both the estimate Z1 and the actual Z1, so the researcher can compare how well the model represents the actual data.
 
@@ -60,7 +90,7 @@ The breakthrough here is that Synth often returns an extremely well-fitted model
 ## How to call Synth
 
 
-    output = synth_tables( df,                  ## dataframe imported from excel and already treated
+    def synth_tables( df,                       ## dataframe imported from excel and already treated
                            predictors,          ## list of predictor variables
                            treated_unit,        ## string with the index of the treated unit
                            control_units,       ## list of strings with indexes of all control units
@@ -72,23 +102,66 @@ The breakthrough here is that Synth often returns an extremely well-fitted model
                            optimize_time,       ## these are the time periods for which you are optimizing the RSS
                            plot_time            ## years which you want to plot
                      )
-    output
 
-    def plot(synth_tables):
-        estimates = estimated_outcomes
-        actual_values = Y1.transpose()[0]
-        plt.plot(range(len(estimates)),estimates, 'r--', label="Synthetic Control")
-        plt.plot(range(len(estimates)),actual_values, 'b-', label="Actual Data")    
-        plt.axvline(x=predict_time[-1])
-        plt.title("Synthetic Control Model")
-        plt.ylabel(measured_variable)
-        plt.xlabel(time_variable)
-        plt.legend(loc='upper left')
-        plt.savefig('Synthetic_Control_Method.pdf')
-        plt.show()
+      control_units.sort()
+      predictors.sort()
+      plot_time.sort()
+
+      X0, X1, Y0, Y1, Z0, Z1 = dataprep(foo, 
+                 predictors, 
+                 treated_unit, 
+                 control_units, 
+                 index_variable, 
+                 measured_variable,
+                 Weights,
+                 time_variable,
+                 predict_time, 
+                 optimize_time, 
+                 plot_time, 
+                 function="mean")
+
+      (est, predict, ctrls) = get_estimate(X0, X1, Z0, Z1, Y0, Weights)
+      predict = [ round(elem,6) for elem in predict ]
+      ctrls = [ round(elem,6) for elem in ctrls ]
+      estimated_predictors = np.dot(X0,ctrls).transpose()
+      predictors_table = pd.DataFrame({'Synthetic':estimated_predictors, 'Actual': X1.transpose()[0]}, index=predictors)
+      estimated_outcomes = np.dot(Y0,ctrls)
+      outcomes_table = pd.DataFrame({'Synthetic':estimated_outcomes, 'Actual':Y1.transpose()[0]},index=plot_time)
+      predictors_weights = pd.DataFrame({'Weight':predict}, index=predictors)
+      controls_weights = pd.DataFrame({'Weight':ctrls}, index=control_units)
+
+      print ("Predictors Table")
+      print ("---")
+      print (predictors_table)
+      print (" ")
+      print ("Outcomes Table")
+      print ("---")
+      print (outcomes_table)
+      print (" ")
+      print ("Predictors' Weights")
+      print ("---")
+      print (predictors_weights)
+      print (" ")
+      print ("Controls' Weights")
+      print ("---")
+      print (controls_weights)
+
+    
+      estimates = estimated_outcomes
+      actual_values = Y1.transpose()[0]
+      plt.plot(range(len(estimates)),estimates, 'r--', label="Synthetic Control")
+      plt.plot(range(len(estimates)),actual_values, 'b-', label="Actual Data")
+      plt.axvline(x=predict_time[-1])
+      plt.title("Synthetic Control Model")
+      plt.ylabel(measured_variable)
+      plt.xlabel(time_variable)
+      plt.legend(loc='upper left')
+      plt.savefig('Synthetic_Control_Method.png')
+      plt.show()
+    
+      return controls_weights
 
 
-    plot(output)
     
 ## References: if you want to know more about Synth
 

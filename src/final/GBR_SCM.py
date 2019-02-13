@@ -2,8 +2,8 @@
 Created on Mon Feb  11 14:08:09 2019
 @author: Ricardo Duque Gabriel
 
-Code for the creation of a SCG for Britain GDP series  
-using 32 OECD countries to be our donor pool
+The file GBR_SCM.py has the code for the creation of a SCG for Japanese GDP series using 31 OECD countries and 
+saves the plot of both synthtetic and original series.
 """
 
 import pandas as pd
@@ -30,7 +30,7 @@ predictors = ["pc_gdp_s", "unemp", "pc_govcons_s",
 weights=np.array([0,0,0,0.16,0,0,0,0,0,0,0,0,0,0.21,0.00,0,0,0.04,0.24,0.03,0,0,0,0,0,0.04,0,0,0.06,0,0,0.22]).transpose()
 
 #create synth tables
-synth_tables(  df,
+Weights=synth_tables(  df,
                predictors,
                "GBR",
                control_units,
@@ -44,3 +44,5 @@ synth_tables(  df,
                )
 
 plt.savefig(ppj("OUT_FIGURES",'Synthetic_Control_Method_GBR.png'))
+
+Weights.to_pickle(ppj("OUT_TABLES", 'Weights_GBR.pkl'))

@@ -1,12 +1,1 @@
 #! python
-
-
-def build(ctx):
-
-    # Illustrate simple use of run_py_script
-    ctx(
-        features='run_py_script',
-        source='Data_Management.py',
-        target=ctx.path_to(ctx, 'OUT_DATA', 'dataset.csv'),
-        name='Data_Management'
-    )

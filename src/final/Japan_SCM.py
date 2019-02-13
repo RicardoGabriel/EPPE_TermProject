@@ -1,9 +1,9 @@
 """
 Created on Sun Feb  3 14:08:09 2019
-@author: Ricardo Duque Gabriel
+@author: Ricardo Duque Gabriel 
 
-Code for the creation of a SCG for Japanese GDP series  
-using 31 OECD countries to be our donor pool
+The file Japan_SCM.py has the code for the creation of a SCG for Japanese GDP series using 31 OECD countries and 
+saves the plot of both synthtetic and original series.
 """
 
 import pandas as pd
@@ -30,7 +30,7 @@ predictors = ["pc_gdp_s",
 weights=np.array([1/len(control_units)]*len(control_units)).transpose()
 
 #create synth tables
-synth_tables(  df,
+Weights=synth_tables(  df,
                predictors,
                "JPN",
                control_units,
@@ -43,7 +43,6 @@ synth_tables(  df,
                [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
                )
 
-with open('Table_Japan.tex','w') as tf:
-     tf.write(controls_weights.to_latex())
-
 plt.savefig(ppj("OUT_FIGURES",'Synthetic_Control_Method_Japan.png'))
+
+Weights.to_pickle(ppj("OUT_TABLES", 'Weights_Japan.pkl'))

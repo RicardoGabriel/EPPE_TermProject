@@ -1,7 +1,22 @@
+'''
+# EPPE Term Project - Synth Package
+Term Project for the Effective Programming Practices for Economists course at University of Bonn
+
+## Disclosure
+This package was first created by @gnazareths (https://github.com/gnazareths/synth) and I will try to improve it and 
+utilize it for my term paper in EPPE (University of Bonn) by March 7th, 2019.
+
+It has two main parts. In the first it is done the data preparation part. 
+In the second, the most important, is where the synthetic control group is constructed as explained in the research paper.
+
+'''
+
+
 import pandas as pd
 import numpy as np
 from scipy.optimize import fmin_slsqp, minimize
 import matplotlib.pyplot as plt
+from bld.project_paths import project_paths_join as ppj
 
 
 
@@ -17,7 +32,12 @@ def dataprep(foo,
              optimize_time, 
              plot_time, 
              function="mean"):
-
+    """Given input of a dataframe, the predictors and outcome variables, the treated and control units,
+    the initial guess for the weights, the time variable used, and intervals of periods in which 
+    it should predict, optimize and plot; this function will return an error if at least one of the inputs
+    is wrongly specified:
+    """
+    
     ## check datatypes of the inputs, and raise errors while they do not match expectation
 
     ## index_variable
@@ -398,19 +418,38 @@ def get_estimate(x0, x1, z0, z1, y0, w):
     estimates = np.dot(y0,controls)
     return estimates, predictors, controls
 
-def synth_tables(foo, 
-                 predictors, 
-                 treated_unit, 
-                 control_units, 
-                 index_variable, 
-                 measured_variable,
-                 Weights,
-                 time_variable,
-                 predict_time, 
-                 optimize_time, 
-                 plot_time,
+def synth_tables(foo,                   ## dataframe imported from excel and already treated
+                 predictors,            ## list of predictor variables
+                 treated_unit,          ## string with the index of the treated unit
+                 control_units,         ## list of strings with indexes of all control units
+                 index_variable,        ## string which tells us which variable is the index we used before
+                 measured_variable,     ## string with the outcome variable
+                 Weights,               ## initial guess for weights (np.ndarray)
+                 time_variable,         ## string with the time variable
+                 predict_time,          ## these are the time periods for which you are predicting the measured variable
+                 optimize_time,         ## these are the time periods for which you are optimizing the RSS
+                 plot_time,             ## years which you want to plot
                  function="mean"):
+    """Given input of a dataframe, the predictors and outcome variables, the treated and control units,
+    the initial guess for the weights, the time variable used, and intervals of periods in which 
+    it should predict, optimize and plot; this function will return a dataframe with the optimal weights
+    and will plot the final result of both doppelganger and original country's series for the outcome variable:
 
+    .. code-block:: python
+
+            synth_tables(dataframe,
+                        predictors list,
+                        treated unit,
+                        control units,
+                        index variable,
+                        outcome variable,
+                        initial guess for weights (np.ndarray),
+                        time variable,
+                        predict period,
+                        optimize period,
+                        plot period,
+                        function="mean")
+    """
     control_units.sort()
     predictors.sort()
     plot_time.sort()
@@ -454,9 +493,7 @@ def synth_tables(foo,
     print ("---")
     print (controls_weights)
 
-    with open('Table.tex','w') as tf:
-        tf.write(controls_weights.to_latex())
-
+    
     estimates = estimated_outcomes
     actual_values = Y1.transpose()[0]
     plt.plot(range(len(estimates)),estimates, 'r--', label="Synthetic Control")
@@ -469,29 +506,4 @@ def synth_tables(foo,
     #plt.savefig('Synthetic_Control_Method.png')
     #plt.show()
     
-    return
-    
-## test code example
-
-## some_dataframe = pd.read_excel("filename.xlsx", header=0)
-## control_units = list(set(some_dataframe["region_name"]))
-## control_units.sort()
-## control_units = control_units[1:4] + control_units[6:]
-## 
-## predictors = [  "medical_legalized", "no_high_school", "high_school", "college",
-##                 "hispanic_pop", "white_pop",
-##                 "african_american_pop", "native_american_pop", "unemployment_rate",
-##                 "urban_pop"
-##              ]
-##     
-## synth_tables(  some_dataframe,
-##                predictors,
-##                "California",
-##                control_units,
-##                "region_name",
-##                "marijuana_18_25",
-##                "year",
-##                [2000,2010],
-##                range(2009,2015),
-##                range(2009,2015)
-##                )
+    return controls_weights

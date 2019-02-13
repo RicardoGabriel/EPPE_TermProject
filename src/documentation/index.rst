@@ -11,12 +11,6 @@ Welcome to the EPPE Term Paper project's documentation!
     :maxdepth: 2
 
     introduction
-    original_data
-    data_management
-    analysis
+    library
     final
     paper
-    model_code
-    model_specs
-    library
-    references
