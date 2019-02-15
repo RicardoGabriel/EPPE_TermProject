@@ -45,6 +45,7 @@ def dataprep(foo,
     ## and sets the index of the dataframe to that column:
 
     foo.index = foo.loc[:,index_variable]
+    foo=foo.drop([index_variable], axis=1)
 
     ## creates a list with the header of the database, if present;
     ## if the header is not present, the result should be a list

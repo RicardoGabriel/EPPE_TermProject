@@ -7,24 +7,28 @@ def build(ctx):
 
         ctx(
             features='run_py_script',
-            source='{}_SCM.py'.format(model),
+            source='{}_SCM.py'.format(model),#'Japan_SCM.py',
             deps=[
                 ctx.path_to(ctx, 'IN_DATA', 'Dataset_TermPaper.xlsx'),
             ],
             target=[
-            	ctx.path_to(ctx, 'OUT_FIGURES', 'Synthetic_Control_Method_{}.png'.format(model)),
+            	#ctx.path_to(ctx, 'OUT_FIGURES', 'Synthetic_Control_Method_Japan.png'),
+                #ctx.path_to(ctx, 'OUT_TABLES', 'Weights_Japan.pkl')
+                ctx.path_to(ctx, 'OUT_FIGURES', 'Synthetic_Control_Method_{}.png'.format(model)),
             	ctx.path_to(ctx, 'OUT_TABLES', 'Weights_{}.pkl'.format(model))
         	]
         )
 
     for model in 'Japan', 'GBR':
-    	ctx(
+        ctx(
     		features='run_py_script',
-    		source='{}_tables.py'.format(model),
+    		source='{}_tables.py'.format(model),#'Japan_tables.py',
     		deps=[
-    			ctx.path_to(ctx, 'OUT_TABLES', 'Weights_{}.pkl'.format(model)),
+    			#ctx.path_to(ctx, 'OUT_TABLES', 'Weights_Japan.pkl'),
+                ctx.path_to(ctx, 'OUT_TABLES', 'Weights_{}.pkl'.format(model)),
     		],
     		target=[
-    			ctx.path_to(ctx, 'OUT_TABLES', 'Table_{}.tex'.format(model))
+    			#ctx.path_to(ctx, 'OUT_TABLES', 'Table_Japan.tex')
+                ctx.path_to(ctx, 'OUT_TABLES', 'Table_{}.tex'.format(model))
     		]
-    	)
+        )

@@ -6,7 +6,7 @@ Code for the creation of a Table in latex with the composition (in weights) of t
 """
 #This sucks, but I could not find any easy-to-implement solution ...
 
-
+import os.path
 import pandas as pd
 from bld.project_paths import project_paths_join as ppj
 from tabulate import tabulate
@@ -46,7 +46,7 @@ for i in range(0,8,2):
 for i in range(1,8,2):
     df.iloc[0,i]='Weight'
 
-print(tabulate(df, showindex="never", headers="firstrow", tablefmt="latex_booktabs", floatfmt=".3f"))
+complete_name=os.path.join(ppj('OUT_TABLES'), "Table_GBR.tex")
 
-with open("Table_GBR.tex","w") as tf:
-     tf.write(ppj("OUT_TABLES", df.to_latex(index=False, header=False, na_rep='', float_format=str)))
+with open(complete_name,"w") as tf:
+    tf.write(df.to_latex(index=False, header=False, na_rep='', float_format=str))
